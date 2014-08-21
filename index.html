@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tilemap as grid experiment</title>
+
+  <script src="phaser.js"></script>
+  <script>
+    var game = new Phaser.Game(600, 400, Phaser.AUTO, 'gameContainer');
+
+    var mainState = {
+      preload: function () {
+        game.load.image('tile', 'assets/tile.png');
+        game.load.tilemap('grid', 'assets/grid.json', null, Phaser.Tilemap.TILED_JSON);
+
+        game.load.image('sword', 'assets/sword.png');
+      },
+
+      create: function () {
+        game.stage.backgroundColor = '#ffffff';
+
+        this.grid = game.add.tilemap('grid');
+        this.grid.addTilesetImage('tile');
+        this.layer = this.grid.createLayer('Tile Layer 1');
+        this.layer.resizeWorld();
+        this.grid.setCollision(1);
+
+        this.sword = game.add.sprite(game.world.centerX, game.world.centerY, 'sword')
+        this.sword.anchor.setTo(0.5, 0.5);
+        this.sword.scale.x = 0.5;
+        this.sword.scale.y = 0.5;
+        game.physics.enable(this.sword);
+
+        this.slash(this.sword);
+      },
+
+      update: function () {
+
+      },
+
+      thrust: function (weapon) {
+        var pullBackDistance = weapon.height / 3;
+        var thrustDistance = weapon.height / 3;
+        var oldY = weapon.y;
+
+        game.add.tween(weapon)
+          .to({y: weapon.y + pullBackDistance}, 500)
+          .to({y: weapon.y - (pullBackDistance + thrustDistance)}, 400)
+          .to({y: oldY}, 500)
+          .start();
+      },
+
+      slash: function (weapon) {
+        // move right & rotate right around pivot point (handle)
+        // move forward arc & rotate left around pivot point
+        // return center and straighten
+        var pullBackDistance = weapon.height / 3;
+        var slashDistance = weapon.height / 3;
+        var oldX = weapon.x;
+        var oldY = weapon.y;
+
+        weapon.x = oldX + 50;
+
+        /*
+        weapon.angle = 45;
+        game.add.tween(weapon)
+          .to({angle: 0}, 500, null, true)
+          .to({angle: -45}, 500, null, true)
+
+        */
+        game.add.tween(weapon)
+          .to({x: oldX}, 500, Phaser.Easing.Sinusoidal.In, true)
+          .to({x: oldX - 50}, 500, Phaser.Easing.Sinusoidal.In, true);
+
+        game.add.tween(weapon)
+          .to({y: oldY - 50}, 500, Phaser.Easing.Sinusoidal.Out)
+          .to({y: oldY}, 500, Phaser.Easing.Sinusoidal.In)
+          .start();
+      }
+    };
+
+    game.state.add('main', mainState);
+    game.state.start('main');
+
+  </script>
+</head>
+<body>
+
+<div id="gameContainer"></div>
+
+</body>
+</html>
