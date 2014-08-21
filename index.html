@@ -25,10 +25,9 @@
         this.layer.resizeWorld();
         this.grid.setCollision(1);
 
-        this.sword = game.add.sprite(game.world.centerX, game.world.centerY, 'sword')
+        this.sword = game.add.sprite(game.world.centerX, game.world.centerY, 'sword');
         this.sword.anchor.setTo(0.5, 0.5);
-        this.sword.scale.x = 0.5;
-        this.sword.scale.y = 0.5;
+
         game.physics.enable(this.sword);
 
         this.slash(this.sword);
@@ -54,11 +53,11 @@
 
       slash: function (weapon) {
         weapon._arc = {
-          startAngle: 30,
-          endAngle: 150,
-          radius: 100,
-          degreePerSecond: 40,
-          counterClockwise: true
+          startAngle: 0,
+          endAngle: 360,
+          radius: 50,
+          degreePerSecond: 180,
+          counterClockwise: false
         };
       },
 
@@ -68,10 +67,16 @@
             obj._arc.startAngle = 360 - obj._arc.startAngle;
             obj._arc.endAngle = 360 - obj._arc.endAngle;
           }
+
           obj._arc.currentAngle = obj._arc.startAngle;
           obj._arc.deltaAngle = Math.abs(obj._arc.endAngle - obj._arc.startAngle);
           obj.body.x = obj._arc._originX = obj.body.x - (obj._arc.radius) * Math.cos(Phaser.Math.degToRad(obj._arc.currentAngle));
-          obj.body.y = obj._arc._originY = obj.body.y - (obj._arc.radius) * Math.sin(Phaser.Math.degToRad(obj._arc.currentAngle));
+          obj.body.y = obj._arc._originY = obj.body.y + (obj._arc.radius) * Math.sin(Phaser.Math.degToRad(obj._arc.currentAngle));
+
+          var path = game.add.graphics(0, 0);
+          path.lineStyle(0);
+          path.beginFill('#ccc', 0.5);
+          path.drawCircle(obj._arc._originX + obj.width/2, obj._arc._originY + obj.height/2, obj._arc.radius);
         }
 
         obj.body.x = obj._arc._originX + (obj._arc.radius * Math.cos(Phaser.Math.degToRad(obj._arc.currentAngle)));
