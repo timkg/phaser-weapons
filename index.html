@@ -13,7 +13,7 @@
         game.load.image('tile', 'assets/tile.png');
         game.load.tilemap('grid', 'assets/grid.json', null, Phaser.Tilemap.TILED_JSON);
 
-        game.load.image('sword', 'assets/sword.png');
+        game.load.image('sword', 'assets/fill.png');
       },
 
       create: function () {
@@ -35,7 +35,9 @@
       },
 
       update: function () {
-
+        if (this.sword._arc) {
+          this.arcMovement(this.sword);
+        }
       },
 
       thrust: function (weapon) {
@@ -51,31 +53,45 @@
       },
 
       slash: function (weapon) {
-        // move right & rotate right around pivot point (handle)
-        // move forward arc & rotate left around pivot point
-        // return center and straighten
-        var pullBackDistance = weapon.height / 3;
-        var slashDistance = weapon.height / 3;
-        var oldX = weapon.x;
-        var oldY = weapon.y;
+        weapon._arc = {
+          startAngle: 30,
+          endAngle: 150,
+          radius: 100,
+          degreePerSecond: 40,
+          counterClockwise: true
+        };
+      },
 
-        weapon.x = oldX + 50;
+      arcMovement: function (obj) {
+        if (!obj._arc.currentAngle) {
+          if (obj._arc.counterClockwise) {
+            obj._arc.startAngle = 360 - obj._arc.startAngle;
+            obj._arc.endAngle = 360 - obj._arc.endAngle;
+          }
+          obj._arc.currentAngle = obj._arc.startAngle;
+          obj._arc.deltaAngle = Math.abs(obj._arc.endAngle - obj._arc.startAngle);
+          obj.body.x = obj._arc._originX = obj.body.x - (obj._arc.radius) * Math.cos(Phaser.Math.degToRad(obj._arc.currentAngle));
+          obj.body.y = obj._arc._originY = obj.body.y - (obj._arc.radius) * Math.sin(Phaser.Math.degToRad(obj._arc.currentAngle));
+        }
 
-        /*
-        weapon.angle = 45;
-        game.add.tween(weapon)
-          .to({angle: 0}, 500, null, true)
-          .to({angle: -45}, 500, null, true)
+        obj.body.x = obj._arc._originX + (obj._arc.radius * Math.cos(Phaser.Math.degToRad(obj._arc.currentAngle)));
+        obj.body.y = obj._arc._originY + (obj._arc.radius * Math.sin(Phaser.Math.degToRad(obj._arc.currentAngle)));
 
-        */
-        game.add.tween(weapon)
-          .to({x: oldX}, 500, Phaser.Easing.Sinusoidal.In, true)
-          .to({x: oldX - 50}, 500, Phaser.Easing.Sinusoidal.In, true);
+        var angleIncrement = (obj._arc.degreePerSecond / 60);
+        obj._arc.deltaAngle -= angleIncrement;
 
-        game.add.tween(weapon)
-          .to({y: oldY - 50}, 500, Phaser.Easing.Sinusoidal.Out)
-          .to({y: oldY}, 500, Phaser.Easing.Sinusoidal.In)
-          .start();
+        if (obj._arc.counterClockwise) {
+          obj._arc.currentAngle -= angleIncrement;
+        } else {
+          obj._arc.currentAngle += angleIncrement;
+        }
+
+        if (obj._arc.deltaAngle <= 0) {
+          delete obj._arc;
+          obj.body.velocity.x = 0;
+          obj.body.velocity.y = 0;
+        }
+
       }
     };
 
