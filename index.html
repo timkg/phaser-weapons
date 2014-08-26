@@ -2,12 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tilemap as grid experiment</title>
+  <title>Sword Dynamics</title>
 
   <script src="phaser.js"></script>
-  <script src="test2.js"></script>
   <script>
-    var game = new Phaser.Game(600, 400, Phaser.CANVAS, 'gameContainer');
+    var game = new Phaser.Game(600, 400, Phaser.AUTO, 'gameContainer');
+
+    var mainState = {
+      preload: function () {},
+      create: function () {},
+      update: function () {}
+    };
 
     game.state.add('main', mainState);
     game.state.start('main');
