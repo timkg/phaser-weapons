@@ -14,12 +14,14 @@
       create: function () {
         game.stage.setBackgroundColor('#dedede');
         window.sword = this.sword = game.add.sprite(game.world.centerX, game.world.centerY, 'sword');
+        sword.y += sword.height/2;
         sword.scale.x = 0.5;
         sword.scale.y = 0.5;
         sword.anchor.setTo(0.5, 0.5);
       },
       update: function () {
-
+        game.debug.spriteBounds(sword)
+        game.debug.spriteInfo(sword, 20, 20)
       }
     });
 
