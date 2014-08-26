@@ -5,14 +5,9 @@
   <title>Sword Dynamics</title>
 
   <script src="phaser.js"></script>
+  <script src="moment-of-inertia/moment-of-inertia.js"></script>
   <script>
     var game = new Phaser.Game(600, 400, Phaser.AUTO, 'gameContainer');
-
-    var mainState = {
-      preload: function () {},
-      create: function () {},
-      update: function () {}
-    };
 
     game.state.add('main', mainState);
     game.state.start('main');
