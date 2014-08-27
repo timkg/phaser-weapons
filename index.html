@@ -8,25 +8,35 @@
   <script src="moment-of-inertia/moment-of-inertia.js"></script>
   <script>
     var game = new Phaser.Game(600, 400, Phaser.AUTO, 'gameContainer', {
+
       preload: function () {
         game.load.image('sword', 'assets/sword.png');
       },
+
       create: function () {
         game.stage.setBackgroundColor('#dedede');
         window.sword = this.sword = game.add.sprite(game.world.centerX, game.world.centerY, 'sword');
         sword.scale.x = 0.5;
         sword.scale.y = 0.5;
-        sword.anchor.setTo(0.5, 1); // position defined by handle
-        sword.y += sword.height;
+        sword.anchor.setTo(0, 0.5); // position defined by handle
+        sword.rotation = - Math.PI / 2
       },
-      update: function () {
 
+      update: function () {
       },
+
       debug: function (sprite) {
         game.debug.spriteBounds(sprite)
         game.debug.spriteInfo(sprite, 20, 20)
       }
+
     });
+
+    function rotateTo (point, target) {
+      var targetAngle = Phaser.Math.angleBetweenPoints(point, target);
+      var delta = targetAngle - point.rotation;
+      point.rotation += delta;
+    }
 
   </script>
 </head>
